@@ -1,21 +1,22 @@
 version: 2.1
 
 jobs:
-  build:
+  # Runs application tests
+  test:
     docker:
       - image: circleci/python:3.7
 
-    working_directory: ~/repo
+    working_directory: ~/test
 
     steps:
+      - setup_remote_docker
       - checkout
       - restore_cache:
           keys:
             - m2-{{ checksum "requirements/dev.txt" }}
             - m2- # used if checksum fails
-
       - run:
-          name: Install dev dependencies
+          name: Install Dev dependencies
           command: |
             python3 -m venv venv
             . venv/bin/activate
@@ -25,11 +26,39 @@ jobs:
           paths:
             - venv
       - run:
-          name: run tests
+          name: Run tests
           command: |
-            . venv/bin/activate
-            make test
+            docker-compose up test
+
+  # Deploys to Docker HUB
+  deploy_docker_hub:
+    docker:
+      - image: circleci/buildpack-deps:stretch
+    steps:
+      - setup_remote_docker
+      - checkout
+      - run:
+          name: Create Docker Image
+          command: |
+            docker build -t $DOCKERHUB_USERNAME/microblog -f docker/Dockerfile_prod .
+      - run:
+          name: Publish Docker Image to Docker Hub
+          command: |
+            echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+            docker push $DOCKERHUB_USERNAME/microblog:latest
+
 workflows:
-  main:
+  test:
     jobs:
-      - build
+      - test:
+          filters:
+            branches:
+              only:
+                - master
+  deploy:
+    jobs:
+      - deploy_docker_hub:
+          filters:
+            branches:
+              only:
+                - master

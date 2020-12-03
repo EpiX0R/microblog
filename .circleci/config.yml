@@ -5,7 +5,6 @@ jobs:
     docker:
       - image: circleci/python:3.7
     steps:
-      - setup_remote_docker
       - checkout
       - run:
           name: Install dependencies
@@ -24,7 +23,6 @@ jobs:
     docker:
       - image: circleci/python:3.7
     steps:
-      - setup_remote_docker
       - checkout
       - run:
           name: Install dependencies
@@ -42,17 +40,17 @@ jobs:
     docker:
       - image: circleci/python:3.7
 
-    working_directory: ~/test
+    working_directory: ~/repo
 
     steps:
-      - setup_remote_docker
       - checkout
       - restore_cache:
           keys:
             - m2-{{ checksum "requirements/dev.txt" }}
             - m2- # used if checksum fails
+
       - run:
-          name: Install Dev dependencies
+          name: Install dev dependencies
           command: |
             python3 -m venv venv
             . venv/bin/activate
@@ -62,11 +60,12 @@ jobs:
           paths:
             - venv
       - run:
-          name: Run tests
+          name: run tests
           command: |
-            docker-compose up test
+            . venv/bin/activate
+            make test
 workflows:
-  deploy:
+  main:
     jobs:
       - test:
           name: test

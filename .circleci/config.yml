@@ -73,3 +73,7 @@ workflows:
       - deploy_ansible:
           name: deploy
           requires: [test]
+          filters:
+              branches:
+                only:
+                  - master

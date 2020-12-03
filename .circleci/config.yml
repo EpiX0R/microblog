@@ -74,9 +74,10 @@ workflows:
   main:
     jobs:
       - test:
-        name: test
-        env: test
+          name: test
+          env: test
+
       - deploy_ansible:
-        name: deploy
-        env: prod
-        requires: [test]
+          name: deploy
+          env: prod
+          requires: [test]

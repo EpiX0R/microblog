@@ -1,15 +1,12 @@
 ---
-- name: Create security group
-  ec2_group:
-    name: "{{ group.name }}"
-    description: The Webserver security group
-    region: "{{ region }}"
-    rules: "{{ group.port_rules }}"
-    rules_egress: # outgoing traffic
-      - proto: all
-        cidr_ip: 0.0.0.0/0
-    state: present
-  loop: "{{ sg_groups }}"
-  loop_control: 
-    loop_var: group
-  delegate_to: 127.0.0.1
+-   name: Create Network Security Group
+    azure_rm_securitygroup:
+        resource_group: "{{ resource_group }}"
+        name: "{{ group.name }}-sg"
+        purge_rules: yes
+        rules: "{{ group.port_rules }}"
+        tags: "{{ vmtags }}"
+    loop: "{{ sg_groups }}"
+    loop_control: 
+        loop_var: group
+    delegate_to: 127.0.0.1

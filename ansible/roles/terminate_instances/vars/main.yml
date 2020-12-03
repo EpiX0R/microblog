@@ -1,0 +1,5 @@
+---
+instances:
+    - name: appServer
+    - name: database
+    - name: loadBalancer

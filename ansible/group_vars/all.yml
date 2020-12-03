@@ -1,6 +1,12 @@
 ---
 # Here you can add variables that will be available for all hosts.
+region: northeurope
+resource_group: BTH-kmom01-JAEI18-16a0e3
+domain_name: epixor.me
 
-region: us-east-1
-project_name: devops
-domain_name: <insert domain name>
+root_user: azureuser
+
+vmtags:
+    StudentId: "jaei18"
+
+pub_ssh_key_location: "/home/epix0r/.ssh/ansible.pub"

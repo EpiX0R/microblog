@@ -1,39 +1,57 @@
 ---
-    sg_groups:
-        - name: load-balancer
-          description: SG for the load balancer
-          port_rules:
-          - proto: tcp
-            from_port: 22
-            to_port: 22
-            cidr_ip: 0.0.0.0/0
-          - proto: tcp
-            from_port: 80
-            to_port: 80
-            cidr_ip: 0.0.0.0/0
-          - proto: tcp
-            from_port: 443
-            to_port: 443
-            cidr_ip: 0.0.0.0/0
-        - name: app-server
-          description: SG for the application server
-          port_rules:
-          - proto: tcp
-            from_port: 22
-            to_port: 22
-            cidr_ip: 0.0.0.0/0
-          - proto: tcp
-            from_port: 8000
-            to_port: 8000
-            cidr_ip: 0.0.0.0/0
-        - name: database
-          description: SG for the database node
-          port_rules:
-          - proto: tcp
-            from_port: 22
-            to_port: 22
-            cidr_ip: 0.0.0.0/0
-          - proto: tcp
-            from_port: 3306
-            to_port: 3306
-            cidr_ip: 0.0.0.0/0
+sg_groups:
+    -   name: loadBalancer
+        port_rules:
+        -   name: SSH
+            protocol: Tcp
+            destination_port_range: 22
+            access: Allow
+            priority: 1001
+            direction: Inbound
+            source_address_prefix: '0.0.0.0/0'
+        -   name: HTTP
+            protocol: Tcp
+            destination_port_range: 80
+            access: Allow
+            priority: 1002
+            direction: Inbound
+            source_address_prefix: '0.0.0.0/0'
+        -   name: HTTPS
+            protocol: Tcp
+            destination_port_range: 443
+            access: Allow
+            priority: 1003
+            direction: Inbound
+            source_address_prefix: '0.0.0.0/0'
+    -   name: appServer
+        port_rules:
+        -   name: APP
+            protocol: Tcp
+            destination_port_range: 22
+            access: Allow
+            priority: 1001
+            direction: Inbound
+            source_address_prefix: '0.0.0.0/0'
+        -   name: HTTP
+            protocol: Tcp
+            destination_port_range: 8000
+            access: Allow
+            priority: 1002
+            direction: Inbound
+            source_address_prefix: '0.0.0.0/0'
+    -   name: database
+        port_rules:
+        -   name: SSH
+            protocol: Tcp
+            destination_port_range: 22
+            access: Allow
+            priority: 1001
+            direction: Inbound
+            source_address_prefix: '0.0.0.0/0'
+        -   name: MYSQL
+            protocol: Tcp
+            destination_port_range: 3306
+            access: Allow
+            priority: 1002
+            direction: Inbound
+            source_address_prefix: '0.0.0.0/0'

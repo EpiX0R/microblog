@@ -1,6 +1,47 @@
 version: 2.1
 
 jobs:
+  deploy_ansible:
+    docker:
+      - image: circleci/python:3.7
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: |
+            python3 -m venv venv
+            . venv/bin/activate
+            make install-deploy
+      - run:
+          name: run tests
+          command: |
+            python3 -m venv venv
+            . venv/bin/activate
+            make test
+      - run:
+          name: Run ansible playbooks
+          command: |
+            python3 -m venv venv
+            . venv/bin/activate
+            cd ansible
+            ansible-playbook provision_instances.yml
+  test:
+    docker:
+      - image: circleci/python:3.7
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: |
+            python3 -m venv venv
+            . venv/bin/activate
+            make install-deploy
+      - run:
+          name: run tests
+          command: |
+            python3 -m venv venv
+            . venv/bin/activate
+            make test
   build:
     docker:
       - image: circleci/python:3.7
@@ -32,4 +73,10 @@ jobs:
 workflows:
   main:
     jobs:
-      - build
+      - test:
+        name: test
+        env: test
+      - deploy_ansible:
+        name: deploy
+        env: prod
+        requires: [test]

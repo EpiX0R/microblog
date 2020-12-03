@@ -1,0 +1,74 @@
+---
+-   name: Create virtual network
+    azure_rm_virtualnetwork:
+        resource_group: "{{ resource_group }}"
+        name: "{{ item.name }}-Vnet"
+        address_prefixes: "10.0.0.0/16"
+        tags: "{{ vmtags }}"
+
+-   name: Add subnet
+    azure_rm_subnet:
+        resource_group: "{{ resource_group }}"
+        name: "{{ item.name }}-Subnet"
+        address_prefix: "10.0.1.0/24"
+        virtual_network: "{{ item.name }}-Vnet"
+
+-   name: Create public IP address
+    azure_rm_publicipaddress:
+        resource_group: "{{ resource_group }}"
+        allocation_method: Static
+        name: "{{ item.name }}-ip"
+        tags: "{{ vmtags }}"
+    delegate_to: localhost
+    register: output_ip_address
+
+-   name: Dump public IP for VM which will be created
+    debug:
+        msg: "The public IP is {{ output_ip_address.state.ip_address }}."
+
+-   name: Create virtual network interface card
+    azure_rm_networkinterface:
+        resource_group: "{{ resource_group }}"
+        name: "{{ item.name }}-NIC"
+        virtual_network: "{{ item.name }}-Vnet"
+        subnet: "{{ item.name }}-Subnet"
+        public_ip_name: "{{ item.name }}-ip"
+        security_group: "{{ item.name }}-sg"
+        tags: "{{ vmtags }}"
+
+-   name: Ensure "A" records for loadBalancer
+    azure_rm_dnsrecordset:
+        resource_group: "{{ resource_group }}"
+        relative_name: "{{ relative_name.name }}"
+        zone_name: "{{ domain_name }}"
+        record_type: A
+        state: present
+        records:
+            - entry: "{{ output_ip_address.state.ip_address }}"
+    when: item.name == 'loadBalancer'
+    loop: "{{ relative_names }}"
+    loop_control: 
+        loop_var: relative_name
+    delegate_to: 127.0.0.1
+
+-   name: Create VM
+    azure_rm_virtualmachine:
+        resource_group: "{{ resource_group }}"
+        name: "{{ item.name }}-VM"
+        admin_username: "{{ root_user }}"
+        ssh_password_enabled: false
+        ssh_public_keys:
+            - path: "/home/{{ root_user }}/.ssh/authorized_keys"
+              key_data: "{{ lookup('file', pub_ssh_key_location) }}"
+        vm_size: Standard_B1s
+        network_interfaces: "{{ item.name }}-NIC"
+        managed_disk_type: Standard_LRS
+        os_disk_size_gb: 30
+        image:
+            offer: Debian-10
+            publisher: Debian
+            sku: 10
+            version: latest
+        tags:
+            StudentId: "{{ vmtags.StudentId }}"
+            PublicIP: "{{ output_ip_address.state.ip_address }}"

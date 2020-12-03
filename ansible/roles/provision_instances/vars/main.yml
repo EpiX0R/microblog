@@ -1,0 +1,9 @@
+---
+instances:
+    - name: appServer
+    - name: database
+    - name: loadBalancer
+
+relative_names:
+    - name: www
+    - name: "@"

@@ -1,0 +1,7 @@
+# Gather facts from remote instance and set as hosts
+---
+-   hosts: local
+    connection: local
+    gather_facts: False
+    roles:
+        -    gather_vm_instances

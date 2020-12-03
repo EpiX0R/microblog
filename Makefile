@@ -92,7 +92,13 @@ info:
 
 # target: validate                     - Validate code with pylint
 .PHONY: validate
-validate:
+validate: validate-docker validate-ci
+	@pylint --rcfile=.pylintrc app tests
+
+
+# target: validate-code				   - Validate ci config and python code
+.PHONY: validate-code
+validate-code:
 	@pylint --rcfile=.pylintrc app tests
 
 
@@ -100,8 +106,8 @@ validate:
 # target: validate-docker              - Validate Dockerfile with hadolint
 .PHONY: validate-docker
 validate-docker:
-	@docker run --rm -i hadolint/hadolint < docker/Dockerfile_prod
-	@docker run --rm -i hadolint/hadolint < docker/Dockerfile_test
+	@sudo docker run --rm -i hadolint/hadolint < docker/Dockerfile_prod
+	@sudo docker run --rm -i hadolint/hadolint < docker/Dockerfile_test
 
 
 
@@ -148,10 +154,18 @@ exec-tests: test-unit test-integration
 
 
 
-# target: test                         - Run tests and display code coverage
+# target: test                          - Run tests and display code coverage
 .PHONY: test
-test: validate exec-tests
-	${py} -m coverage report  --rcfile=.coveragerc
+test: exec-tests validate
+	${py} -m coverage report --rcfile=.coveragerc
+	$(MAKE) clean-cov
+
+
+
+# target: test                          - Run tests and display code coverage
+.PHONY: ci-test
+ci-test: exec-tests validate-code
+	${py} -m coverage report --rcfile=.coveragerc
 	$(MAKE) clean-cov
 
 

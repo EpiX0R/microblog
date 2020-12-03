@@ -64,13 +64,6 @@ jobs:
           command: |
             docker-compose up test
 workflows:
-  test:
-    jobs:
-      - test:
-          filters:
-            branches:
-              only:
-                - master
   deploy:
     jobs:
       - test:

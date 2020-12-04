@@ -9,4 +9,4 @@ root_user: azureuser
 vmtags:
     StudentId: "jaei18"
 
-pub_ssh_key_location: "~/.ssh/id_rsa.pub"
+pub_ssh_key_location: "~/.ssh/id_rsa"

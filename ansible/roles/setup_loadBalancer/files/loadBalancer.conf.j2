@@ -1,0 +1,35 @@
+http {
+    upstream app-hosts {
+        {{ lb_method }};
+        server {{ groups['appServer'][0] }}:8000;
+    }
+
+    access_log /var/log/nginx/access.log;
+    error_log /var/log/nginx/error.log;
+
+    # This server accepts all traffic to port 80 and passes it to the upstream. 
+    # Notice that the upstream name and the proxy_pass need to match.
+
+    server {
+       listen 80;
+       server_name  {{ domain_name }} www.{{ domain_name }};
+       return 301 https://$server_name$request_uri;
+    
+       #location / {
+       #   proxy_pass http://app-hosts;
+       #}
+    }
+    server {
+       listen 443 ssl;
+       server_name  {{ domain_name }} www.{{ domain_name }};
+       add_header Strict-Transport-Security "max-age=31536000; includeSubDomains";
+        
+       ssl_certificate /etc/letsencrypt/live/{{ domain_name }}/cert.pem;
+       ssl_certificate_key /etc/letsencrypt/live/{{ domain_name }}/privkey.pem;
+       ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+
+       location / {
+          proxy_pass http://app-hosts;
+       }
+    }
+}

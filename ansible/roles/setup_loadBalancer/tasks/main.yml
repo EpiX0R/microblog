@@ -1,0 +1,48 @@
+---
+# Variable setup.
+- name: Include OS-specific variables.
+  include_vars: "Debian.yml"
+
+- name: Define nginx_user.
+  set_fact:
+    nginx_user: "{{ __nginx_user }}"
+  when: nginx_user is not defined
+
+# Setup/install Debian
+- include_tasks: setup-Debian.yml
+  when: ansible_os_family == 'Debian'
+
+# Vhost configuration.
+- import_tasks: vhosts.yml
+
+# Nginx setup.
+- name: Copy nginx configuration in place.
+  template:
+    src: files/nginx.conf.j2
+    dest: /etc/nginx/nginx.conf
+  notify:
+    - reload nginx
+
+# Nginx load balancer setup.
+- name: Copy nginx load balancer configuration in place.
+  template:
+    src: files/loadBalancer.conf.j2
+    dest: /etc/nginx/sites-enabled/loadBalancer.conf
+  notify:
+    - reload nginx
+
+# Nginx load balancer symlink
+#- name: Create symlink for load balancer
+#  file:
+#    src: /etc/nginx/sites-available/loadBalancer.conf
+#    dest: /etc/nginx/sites-enabled/loadBalancer.conf
+#    state: link
+#  notify:
+#    - reload nginx
+
+# Ensure nginx is started
+- name: Ensure nginx service is running as configured.
+  service:
+    name: nginx
+    state: "{{ nginx_service_state }}"
+    enabled: "{{ nginx_service_enabled }}"

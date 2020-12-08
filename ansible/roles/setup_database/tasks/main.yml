@@ -1,18 +1,12 @@
----
-- include_tasks: setup-Debian.yml
-  when: ansible_os_family == 'Debian'
-
-- name: Install Docker.
-  package:
-    name: "{{ docker_package }}"
-    state: "{{ docker_package_state }}"
-  notify: restart docker
-
-- name: Ensure Docker is started and enabled at boot.
-  service:
-    name: docker
-    state: "{{ docker_service_state }}"
-    enabled: "{{ docker_service_enabled }}"
-
-- name: Ensure handlers are notified now to avoid firewall conflicts.
-  meta: flush_handlers
+- name: Create a Docker Container
+  docker_container:
+    name: "{{ docker_container_name }}"
+    image: "{{ docker_container_image }}"
+    state: started
+    ports:
+    - "{{ docker_container_ports }}"
+    env:
+      MYSQL_ROOT_PASSWORD: "{{ mysql_root_password }}"
+      MYSQL_DATABASE: "{{ mysql_database }}"
+      MYSQL_USER: "{{ mysql_user }}"
+      MYSQL_PASSWORD: "{{ mysql_password }}"

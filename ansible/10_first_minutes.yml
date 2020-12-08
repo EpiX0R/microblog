@@ -1,0 +1,10 @@
+---
+- hosts:
+  - database
+  - appServer
+  - loadBalancer
+  remote_user: azureuser
+  become: yes
+  become_method: sudo
+  roles:
+    - 10-first-minutes

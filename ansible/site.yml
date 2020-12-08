@@ -3,3 +3,4 @@
 -   import_playbook: terminate_instances.yml
 -   import_playbook: provision_instances.yml
 -   import_playbook: gather_vm_instances.yml
+-   import_playbook: 10_first_minutes.yml

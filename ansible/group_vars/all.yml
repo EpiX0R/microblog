@@ -9,4 +9,4 @@ root_user: azureuser
 vmtags:
     StudentId: "jaei18"
 
-pub_ssh_key_location: "/home/epix0r/.ssh/ansible.pub"
+pub_ssh_key_location: "~/.ssh/ansible.pem.pub"

@@ -1,0 +1,11 @@
+---
+root_password: $6$hUdNZI9y$c2dfAWvWWg14kDfpEgeA/cWKILjzzvnzvK3fpRTD/OtRdMw59ONakbED2oaRHSxUvwAqa/ec8h840zlmpJdxo/
+
+server_user: deploy
+
+server_user_password: $6$3yGslU8uuoRuM$B.AB5DXXJA..UKiAjH0MvZxLzgxHEoH5qGzCT6GDw4EG6FodNqJVXZnERZpwudGxdEG87WyrHeTOMKla07RIX1
+
+server_user_groups:
+  - sudo
+
+pub_ssh_key_location: "~/.ssh/ansible.pem.pub"

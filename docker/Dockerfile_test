@@ -1,0 +1,25 @@
+# python:3.8-alpine can be used to skip gcc dependency install but introduces test context issues
+FROM python:3.6-alpine
+RUN adduser -D microblog
+
+WORKDIR /home/microblog
+
+COPY requirements requirements
+COPY Makefile Makefile
+
+RUN python -m venv .venv
+ENV FLASK_APP microblog.py
+
+# gcc required packages to run make install-test
+RUN apk add --no-cache --virtual .build-deps gcc=9.3.0-r2 musl-dev=1.1.24-r9 libffi-dev=3.3-r2 openssl-dev=1.1.1g-r0 python3-dev=3.8.5-r0
+RUN pip install cython==0.29
+
+RUN apk update --no-cache && apk add --no-cache make=4.3-r0
+
+RUN make install-test
+
+# removes gcc required packages
+RUN apk del .build-deps gcc musl-dev
+
+EXPOSE 5000
+ENTRYPOINT ["make", "ci-test"]

@@ -1,11 +1,52 @@
 ---
+### VM Settings ###
+
 root_password: $6$hUdNZI9y$c2dfAWvWWg14kDfpEgeA/cWKILjzzvnzvK3fpRTD/OtRdMw59ONakbED2oaRHSxUvwAqa/ec8h840zlmpJdxo/
-
 server_user: deploy
-
 server_user_password: $6$3yGslU8uuoRuM$B.AB5DXXJA..UKiAjH0MvZxLzgxHEoH5qGzCT6GDw4EG6FodNqJVXZnERZpwudGxdEG87WyrHeTOMKla07RIX1
-
 server_user_groups:
   - sudo
 
 pub_ssh_key_location: "~/.ssh/ansible.pem.pub"
+
+
+
+### Docker Install Settings ###
+
+# Edition can be one of: 'ce' (Community Edition) or 'ee' (Enterprise Edition).
+docker_edition: 'ce'
+docker_package: "docker-{{ docker_edition }}"
+docker_package_state: present
+
+# Service options.
+docker_service_state: started
+docker_service_enabled: true
+docker_restart_handler_state: restarted
+
+# Docker Compose options.
+docker_install_compose: true
+docker_compose_version: "1.26.0"
+docker_compose_path: /usr/local/bin/docker-compose
+
+# Used only for Debian/Ubuntu. Switch 'stable' to 'edge' if needed.
+docker_apt_release_channel: stable
+docker_apt_arch: amd64
+docker_apt_repository: "deb [arch={{ docker_apt_arch }}] https://download.docker.com/linux/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} {{ docker_apt_release_channel }}"
+docker_apt_ignore_key_error: true
+docker_apt_gpg_key: https://download.docker.com/linux/{{ ansible_distribution | lower }}/gpg
+
+
+
+### Docker Container Settings ###
+
+docker_container_name: database
+docker_container_image: mysql:5.7
+docker_container_ports: 3306:3306
+
+
+
+### MySQL Settings ###
+mysql_root_password: microblog
+mysql_database: microblog
+mysql_user: microblog_user
+mysql_password: microblog_user

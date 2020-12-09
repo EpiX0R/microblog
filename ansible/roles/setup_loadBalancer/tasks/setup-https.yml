@@ -1,0 +1,26 @@
+-   name: Install packages
+    apt:
+        name: 
+          - nginx
+          - python-certbot-nginx
+        state: present
+
+-   name: Check if certificate already exists.
+    stat:
+        path: /etc/letsencrypt/live/{{ domain_name }}/cert.pem
+    register: letsencrypt_cert
+
+-   debug: msg="{{ letsencrypt_cert.stat.exists }}"
+
+-   name: Stop services to allow certbot to generate a cert.
+    command: service nginx stop
+    when: not letsencrypt_cert.stat.exists
+
+-   name: Generate new certificate if one doesn't exist.
+    shell: "certbot certonly --standalone --noninteractive --expand --agree-tos --email {{ admin_email }} -d {{ domain_name }} -d www.{{ domain_name }}"
+    when: not letsencrypt_cert.stat.exists
+
+-   name: Remove default conf
+    file:
+        state: absent
+        path: /etc/nginx/sites-enabled/default

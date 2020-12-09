@@ -4,3 +4,6 @@
 -   import_playbook: provision_instances.yml
 -   import_playbook: gather_vm_instances.yml
 -   import_playbook: 10_first_minutes.yml
+-   import_playbook: setup_database.yml
+-   import_playbook: setup_appServer.yml
+-   import_playbook: setup_loadBalancer.yml

@@ -10,6 +10,7 @@ server_user_groups:
 pub_ssh_key_location: "~/.ssh/ansible.pem.pub"
 
 
+
 ### Docker Install Settings ###
 
 # Edition can be one of: 'ce' (Community Edition) or 'ee' (Enterprise Edition).

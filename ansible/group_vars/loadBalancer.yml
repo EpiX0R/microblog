@@ -9,6 +9,12 @@ pub_ssh_key_location: "~/.ssh/ansible.pem.pub"
 
 
 
+### HTTPS Settings ###
+
+admin_email: jakoberiksson99@hotmail.com
+
+
+
 ### nginx Setup ###
 
 # Used only for Debian/Ubuntu installation, as the -t option for apt.

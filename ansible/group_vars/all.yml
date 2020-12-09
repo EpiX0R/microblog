@@ -10,4 +10,4 @@ vmtags:
     StudentId: "jaei18"
 
 # local_pub_ssh_key_location: "~/.ssh/ansible.pem.pub"
-pub_ssh_key_location: "~/.ssh/id_rsa.pub"
+pub_ssh_key_location: "~/.ssh/id_rsa"

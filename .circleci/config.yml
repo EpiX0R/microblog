@@ -56,6 +56,11 @@ workflows:
     jobs:
       - test:
           name: test
+          filter:
+            branches:
+              only:
+                - master
+                - development
       
       - build_docker:
           name: build

@@ -67,7 +67,7 @@ workflows:
 
       - deploy_ansible:
           name: deploy
-          requires: [build_docker]
+          requires: [build]
           filters:
               branches:
                 only:

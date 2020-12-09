@@ -18,7 +18,22 @@ jobs:
             python3 -m venv venv
             . venv/bin/activate
             cd ansible
-            ansible-playbook provision_instances.yml
+            ansible-playbook gather_vm_instances.yml setup_appServer.yml
+  build_docker:
+    docker:
+      - image: circleci/buildpack-deps:stretch
+    steps:
+      - setup_remote_docker
+      - checkout
+      - run:
+          name: Create Docker Image
+          command: |
+            docker build -t $DOCKERHUB_USERNAME/microblog -f docker/Dockerfile.prod .
+      - run:
+          name: Publish Docker Image to Docker Hub
+          command: |
+            echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+            docker push $DOCKERHUB_USERNAME/microblog:latest
   test:
     docker:
       - image: circleci/python:3.7
@@ -36,43 +51,23 @@ jobs:
             python3 -m venv venv
             . venv/bin/activate
             make test
-  build:
-    docker:
-      - image: circleci/python:3.7
-
-    working_directory: ~/repo
-
-    steps:
-      - checkout
-      - restore_cache:
-          keys:
-            - m2-{{ checksum "requirements/dev.txt" }}
-            - m2- # used if checksum fails
-
-      - run:
-          name: Install dev dependencies
-          command: |
-            python3 -m venv venv
-            . venv/bin/activate
-            make install-dev
-      - save_cache:
-          key: m2-{{ checksum "requirements/dev.txt" }}
-          paths:
-            - venv
-      - run:
-          name: run tests
-          command: |
-            . venv/bin/activate
-            make test
 workflows:
   main:
     jobs:
       - test:
           name: test
+      
+      - build_docker:
+          name: build
+          requires: [test]
+          filters:
+              branches:
+                only:
+                  - master
 
       - deploy_ansible:
           name: deploy
-          requires: [test]
+          requires: [build_docker]
           filters:
               branches:
                 only:

@@ -61,14 +61,12 @@ workflows:
           name: build
           requires: [test]
           filters:
-              branches:
-                only:
-                  - master
+              tags:
+                only: "^v.*"
 
       - deploy_ansible:
           name: deploy
           requires: [build]
           filters:
-              branches:
-                only:
-                  - master
+              tags:
+                only: "^v.*"

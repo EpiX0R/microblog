@@ -11,4 +11,5 @@ while true; do
     sleep 5
 done
 
-exec gunicorn -b :5000 --access-logfile - --error-logfile - microblog:app
+exec gunicorn --statsd-host=localhost:9125 --statsd-prefix=helloworld --bind :5000 --access-logfile - --error-logfile - microblog:app
+#exec gunicorn -b :5000 --access-logfile - --error-logfile - microblog:app

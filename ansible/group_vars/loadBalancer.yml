@@ -6,6 +6,7 @@ server_user_groups:
   - sudo
 
 pub_ssh_key_location: "~/.ssh/ansible.pem.pub"
+ansible_ssh_private_key_file: ~/.ssh/ansible.pem
 
 
 

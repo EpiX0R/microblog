@@ -3,6 +3,7 @@ instances:
     - name: appServer
     - name: database
     - name: loadBalancer
+    - name: monitoring
 
 relative_names:
     - name: www

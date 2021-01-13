@@ -9,6 +9,8 @@ root_user: azureuser
 vmtags:
     StudentId: "jaei18"
 
+# USE LOCAL KEY WHEN RUNNING ANSIBLE LOCALLY | FOR GITHUB RELEASES / CIRCLECI USE CIRCLECI KEY
+
 # local_pub_ssh_key_location: "~/.ssh/ansible.pem.pub"
 # circleci_pub_ssh_key_location: "~/.ssh/id_rsa"
 pub_ssh_key_location: "~/.ssh/ansible.pem.pub"

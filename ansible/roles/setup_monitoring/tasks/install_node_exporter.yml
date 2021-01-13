@@ -1,0 +1,54 @@
+---
+# Node Exporter
+
+- name: Download and unpack Node Exporter
+  unarchive:
+    remote_src: yes
+    src: https://github.com/prometheus/node_exporter/releases/download/v1.0.1/node_exporter-1.0.1.linux-amd64.tar.gz
+    dest: "{{ download_path }}"
+
+- name: Create node_exporter user
+  user:
+    name: "node_exporter"
+    system: yes
+    state: present
+    shell: /bin/false
+
+- name: Copy node_exporter binary to /usr/local/bin
+  copy:
+    remote_src: yes
+    src: /home/deploy/node_exporter-1.0.1.linux-amd64/node_exporter
+    dest: /usr/local/bin
+    owner: node_exporter
+    group: node_exporter
+    mode: ugo+rwx
+
+- name: Create node_exporter service from template
+  template:
+      src: templates/node_exporter_service.j2
+      dest: /etc/systemd/system/node_exporter.service
+#      owner: deploy
+#      group: deploy
+#      mode: '0644'
+
+- name: Become sudo and reload daemon
+  become: yes
+  command: systemctl daemon-reload
+
+- name: Become sudo and start node_exporter service
+  become: yes
+  command: systemctl start node_exporter
+
+- name: Become sudo and check node_exporter service
+  become: yes
+  command: systemctl status node_exporter.service
+
+- name: Become sudo and enable node_exporter service for system startup
+  become: yes
+  command: systemctl enable node_exporter
+
+- name: Verify that node_exporter service is working
+  uri:
+    url: http://localhost:9100/metrics
+    method: GET
+    status_code: 200

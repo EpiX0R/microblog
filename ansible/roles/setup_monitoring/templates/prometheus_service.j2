@@ -1,0 +1,21 @@
+[Unit]
+Description=Prometheus Server
+Documentation=https://prometheus.io/docs/introduction/overview/
+After=network-online.target
+
+[Service]
+# User=azureuser
+Restart=on-failure
+Type=simple
+KillMode=process
+RestartSec=10
+
+#Change this line if you download the 
+#Prometheus on different path user
+ 
+ExecStart=/etc/prometheus/prometheus --config.file=/etc/prometheus/prometheus.yml --storage.tsdb.path=/var/lib/prometheus/data/
+# ExecStart=/etc/prometheus/prometheus --web.external-url="http://{{ groups['monitoring'][0] }}:9090"
+# ExecStart=~/prometheus/prometheus --storage.tsdb.path=/var/lib/prometheus/data/ --web.external-url=http://myurl.com:9090
+
+[Install]
+WantedBy=multi-user.target

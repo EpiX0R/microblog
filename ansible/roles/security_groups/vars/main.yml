@@ -23,6 +23,13 @@ sg_groups:
             priority: 1003
             direction: Inbound
             source_address_prefix: '0.0.0.0/0'
+        -   name: Exporter
+            protocol: Tcp
+            destination_port_range: 9113
+            access: Allow
+            priority: 1004
+            direction: Inbound
+            source_address_prefix: '0.0.0.0/0'
     -   name: appServer
         port_rules:
         -   name: APP
@@ -34,9 +41,16 @@ sg_groups:
             source_address_prefix: '0.0.0.0/0'
         -   name: HTTP
             protocol: Tcp
-            destination_port_range: 8000
+            destination_port_range: 5000
             access: Allow
             priority: 1002
+            direction: Inbound
+            source_address_prefix: '0.0.0.0/0'
+        -   name: GunicornExporter
+            protocol: Tcp
+            destination_port_range: 9102
+            access: Allow
+            priority: 1003
             direction: Inbound
             source_address_prefix: '0.0.0.0/0'
     -   name: database

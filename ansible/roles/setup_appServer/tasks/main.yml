@@ -1,12 +1,32 @@
+# microblog container
+
 - name: Create a Docker Container
   docker_container:
     name: "{{ docker_container_name }}"
     image: "{{ docker_container_image }}"
     state: started
-    ports:
-    - "{{ docker_container_ports }}"
+    network_mode: host
+    #ports:
+    #- "{{ docker_container_ports }}"
+    #env:
+    #  MYSQL_ROOT_PASSWORD: "{{ mysql_root_password }}"
+    #  MYSQL_DATABASE: "{{ mysql_database }}"
+    #  MYSQL_USER: "{{ mysql_user }}"
+    #  MYSQL_PASSWORD: "{{ mysql_password }}"
     env:
-      MYSQL_ROOT_PASSWORD: "{{ mysql_root_password }}"
-      MYSQL_DATABASE: "{{ mysql_database }}"
-      MYSQL_USER: "{{ mysql_user }}"
-      MYSQL_PASSWORD: "{{ mysql_password }}"
+      MYSQL_HOST: "{{ groups['database'][0] }}"
+      DATABASE_URL: "mysql+pymysql://microblog_user:microblog_user@{{ groups['database'][0] }}:3306/microblog"
+
+
+# statsd exporter
+
+- name: Copy statsD config
+  copy:
+    src: files/statsd.conf
+    dest: statsd.conf
+
+-   name: Pull the statsd_exporter docker container
+    command: docker pull prom/statsd-exporter
+
+- name: Start the statsd container
+  command: docker run -dP --net=host -v ${PWD}/statsd.conf:/statsd/statsd.conf prom/statsd-exporter "--statsd.mapping-config=/statsd/statsd.conf"

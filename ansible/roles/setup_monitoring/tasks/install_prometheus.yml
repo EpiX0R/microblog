@@ -1,0 +1,33 @@
+---
+# Prometheus
+
+- name: Download and unpack Prometheus
+  unarchive:
+    remote_src: yes
+    src: https://github.com/prometheus/prometheus/releases/download/v2.24.0/prometheus-2.24.0.linux-amd64.tar.gz
+    dest: /etc/
+
+- name: Rename prometheus
+  command: mv /etc/prometheus-2.24.0.linux-amd64 /etc/prometheus
+
+- name: Modify the prometheus configuration file through template
+  template:
+    src: templates/prometheus_config.yml.j2
+    dest: /etc/prometheus/prometheus.yml
+
+- name: Create prometheus storage directory
+  file:
+    path: /var/lib/prometheus/data/
+    state: directory
+
+- name: Create a prometheus service file through template
+  template:
+    src: templates/prometheus_service.j2
+    dest: /etc/systemd/system/prometheus.service
+
+- name: reload daemon
+  become: yes
+  shell: systemctl daemon-reload
+
+- name: Start service
+  service: name=prometheus state=started enabled=yes

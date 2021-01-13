@@ -1,5 +1,4 @@
 ---
--   import_playbook: gather_vm_instances.yml
 -   import_playbook: terminate_instances.yml
 -   import_playbook: provision_instances.yml
 -   import_playbook: gather_vm_instances.yml
@@ -7,3 +6,4 @@
 -   import_playbook: setup_database.yml
 -   import_playbook: setup_appServer.yml
 -   import_playbook: setup_loadBalancer.yml
+-   import_playbook: setup_monitoring.yml

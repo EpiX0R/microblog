@@ -64,20 +64,20 @@ workflows:
                 - master
                 - development
       
-      - build_docker:
-          name: build
-          requires: [test]
-          filters:
-              tags:
-                only: /^v.*/
-              branches:
-                ignore: /.*/
-
-      - deploy_ansible:
-          name: deploy
-          requires: [build]
-          filters:
-              tags:
-                only: /^v.*/
-              branches:
-                ignore: /.*/
+#      - build_docker:
+#          name: build
+#          requires: [test]
+#          filters:
+#              tags:
+#                only: /^v.*/
+#              branches:
+#                ignore: /.*/
+#
+#      - deploy_ansible:
+#          name: deploy
+#          requires: [build]
+#          filters:
+#              tags:
+#                only: /^v.*/
+#              branches:
+#                ignore: /.*/

@@ -15,9 +15,14 @@
 
 # MySQL Exporter
 
--  name: Execute setup script in database docker container
-   become: yes
-   shell: sudo docker exec -it database mysql -uroot -pmicroblog < files/exporter.sql
+- name: Copy MySQL exporter setup
+  copy:
+      src: files/exporter.sql
+      dest: exporter.sql
+
+- name: Execute setup script in database docker container
+  become: yes
+  shell: sudo docker exec -i database mysql -uroot -pmicroblog < exporter.sql
 
 - name: Pull mysql_exporter from docker
   become: yes

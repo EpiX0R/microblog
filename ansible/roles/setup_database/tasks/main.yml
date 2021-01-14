@@ -15,14 +15,9 @@
 
 # MySQL Exporter
 
-- name: Copy MySQL exporter setup
-  copy:
-      src: files/exporter.sql
-      dest: exporter.sql
-
 -  name: Execute setup script in database docker container
    become: yes
-   shell: docker exec database mysql -uroot -pmicroblog < exporter.sql
+   shell: sudo docker exec -it database mysql -uroot -pmicroblog < files/exporter.sql
 
 - name: Pull mysql_exporter from docker
   become: yes
@@ -30,15 +25,16 @@
 
 - name: Start mysql_exporter docker container
   command: |
-    docker run -d \
-      -p 9104:9104 \
-      --network host \
-      -e DATA_SOURCE_NAME="exporter:exporter@(localhost:3306)/" \
-      --restart always \
-      prom/mysqld-exporter:latest \
-      --collect.auto_increment.columns \
-      --collect.binlog_size \
-      --collect.engine_innodb_status \
-      --collect.engine_tokudb_status \
-      --collect.global_status \
+    docker run -d
+      -p 9104:9104
+      --network host
+      -e DATA_SOURCE_NAME="exporter:exporter@(localhost:3306)/"
+      --restart always
+      prom/mysqld-exporter:latest
+      --collect.auto_increment.columns
+      --collect.binlog_size
+      --collect.engine_innodb_status
+      --collect.engine_tokudb_status
+      --collect.global_status
+      --collect.global_variables
       --collect.info_schema.processlist

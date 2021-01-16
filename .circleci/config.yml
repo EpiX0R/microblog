@@ -32,9 +32,8 @@ jobs:
           name: Create Docker Image
           command: |
             docker build -t $DOCKERHUB_USERNAME/microblog -f docker/Dockerfile_prod .
-      - run:
-          - snyk/scan:
-            docker-image-name: $IMAGE_NAME
+      - snyk/scan:
+          docker-image-name: $IMAGE_NAME
       - run:
           name: Publish Docker Image to Docker Hub
           command: |
@@ -79,6 +78,8 @@ workflows:
           filters:
             branches:
               only:
+              # Temporarily added to test development pushes
+                - development
                 - master
 
       - test:
@@ -97,8 +98,9 @@ workflows:
           filters:
               tags:
                 only: /^v.*/
-              branches:
-                ignore: /.*/
+              # Temporarily ignoring branch ignore statement to test development pushes
+              #branches:
+              #  ignore: /.*/
 
 #      - deploy_ansible:
 #          name: deploy

@@ -98,8 +98,9 @@ workflows:
           filters:
               tags:
                 only: /^v.*/
-              branches:
-                ignore: /.*/
+              # Temporarily ignoring branch ignore statement to test development pushes
+              #branches:
+              #  ignore: /.*/
 
 #      - deploy_ansible:
 #          name: deploy

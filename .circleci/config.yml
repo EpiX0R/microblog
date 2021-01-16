@@ -33,6 +33,9 @@ jobs:
           command: |
             docker build -t $DOCKERHUB_USERNAME/microblog -f docker/Dockerfile_prod .
       - run:
+          - snyk/scan:
+            docker-image-name: $IMAGE_NAME
+      - run:
           name: Publish Docker Image to Docker Hub
           command: |
             echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
@@ -77,6 +80,7 @@ workflows:
             branches:
               only:
                 - master
+
       - test:
           name: test
           filters:
@@ -87,15 +91,15 @@ workflows:
                 - master
                 - development
 
-#      - build_docker:
-#          name: build
-#          requires: [test]
-#          filters:
-#              tags:
-#                only: /^v.*/
-#              branches:
-#                ignore: /.*/
-#
+      - build_docker:
+          name: build
+          requires: [test]
+          filters:
+              tags:
+                only: /^v.*/
+              branches:
+                ignore: /.*/
+
 #      - deploy_ansible:
 #          name: deploy
 #          requires: [build]

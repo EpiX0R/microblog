@@ -29,7 +29,7 @@ sg_groups:
             access: Allow
             priority: 1004
             direction: Inbound
-            source_address_prefix: '0.0.0.0/0'
+            source_address_prefix: '{{ groups['monitoring'][0] }}/32'
     -   name: appServer
         port_rules:
         -   name: APP
@@ -45,14 +45,14 @@ sg_groups:
             access: Allow
             priority: 1002
             direction: Inbound
-            source_address_prefix: '0.0.0.0/0'
+            source_address_prefix: '{{ groups['loadBalancer'][0] }}/32
         -   name: GunicornExporter
             protocol: Tcp
             destination_port_range: 9102
             access: Allow
             priority: 1003
             direction: Inbound
-            source_address_prefix: '0.0.0.0/0'
+            source_address_prefix: '{{ groups['monitoring'][0] }}/32'
     -   name: database
         port_rules:
         -   name: SSH
@@ -68,14 +68,14 @@ sg_groups:
             access: Allow
             priority: 1002
             direction: Inbound
-            source_address_prefix: '0.0.0.0/0'
+            source_address_prefix: '{{ groups['appServer'][0] }}/32'
         -   name: MySQLExporter
             protocol: Tcp
             destination_port_range: 9104
             access: Allow
             priority: 1003
             direction: Inbound
-            source_address_prefix: '0.0.0.0/0'
+            source_address_prefix: '{{ groups['monitoring'][0] }}/32'
     -   name: monitoring
         port_rules:
         -   name: SSH

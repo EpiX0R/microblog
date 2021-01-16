@@ -151,7 +151,7 @@ exec-tests: test-unit test-integration
 # target: test                         - Run tests and display code coverage
 .PHONY: test
 test: validate exec-tests
-	${MAKE} test-bandit
+	${MAKE} bandit
 	${py} -m coverage report --rcfile=.coveragerc
 	$(MAKE) clean-cov
 
@@ -164,10 +164,18 @@ test-html: exec-tests
 
 
 
-## target: test-bandit					- Run bandit and display test results
-.PHONY: test-bandit
-test-bandit:
+## target: bandit						- Run bandit and display test results
+.PHONY: bandit
+bandit:
 	bandit -r app
+
+
+
+## target: zap							- Run zap and display test results
+.PHONY: zap
+zap:
+	@docker run owasp/zap2docker-weekly zap-baseline.py -t http://http://137.135.220.99:5000
+	# @docker run owasp/zap2docker-weekly zap-baseline.py -t https://www.epixor.me
 
 
 

@@ -40,24 +40,6 @@
     state: present
     key: "{{ lookup('file', item) }}"
   with_items: "{{ pub_ssh_key_location }}"
-    
-- name: Disallow root SSH access
-  lineinfile:
-    path: /etc/ssh/sshd_config
-    regexp: "^PermitRootLogin"
-    line: "PermitRootLogin no"
-    state: present
-  notify:
-    - restart ssh
-
-- name: Disallow password authentication
-  lineinfile:
-    path: /etc/ssh/sshd_config
-    regexp: "^PasswordAuthentication"
-    line: "PasswordAuthentication no"
-    state: present
-  notify:
-    - Restart SSH service
 
 - meta: flush_handlers
 
@@ -68,13 +50,12 @@
     line: "{{ server_user }} ALL=(ALL) NOPASSWD:ALL"
     state: present
 
-- name: Only allow deploy user to SSH
-  lineinfile:
-    path: /etc/ssh/sshd_config
-    regexp: "^AllowUsers"
-    line: "AllowUsers {{ server_user }}"
-    state: present
-  ignore_errors: yes
+- name: Update SSH config
+  copy:
+    src:  files/sshd_config
+    dest: /etc/ssh/sshd_config
+  notify:
+    - restart ssh
 
 - name: Remove default user
   remote_user: "{{ server_user }}"

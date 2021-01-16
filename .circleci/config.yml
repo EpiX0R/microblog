@@ -1,5 +1,8 @@
 version: 2.1
 
+orbs: 
+    snyk: snyk/snyk@0.0.8
+
 jobs:
   deploy_ansible:
     docker:
@@ -28,7 +31,9 @@ jobs:
       - run:
           name: Create Docker Image
           command: |
-            docker build -t $DOCKERHUB_USERNAME/microblog -f docker/Dockerfile.prod .
+            docker build -t $DOCKERHUB_USERNAME/microblog -f docker/Dockerfile_prod .
+      - snyk/scan:
+          docker-image-name: $IMAGE_NAME
       - run:
           name: Publish Docker Image to Docker Hub
           command: |
@@ -51,24 +56,54 @@ jobs:
             python3 -m venv venv
             . venv/bin/activate
             make test
+  snyk:
+    docker:
+        - image: circleci/python:3.5
+    working_directory: ~/repo
+    steps:
+        - checkout
+        - run:
+            name: install dependencies
+            command: |
+                python3 -m venv venv
+                . venv/bin/activate
+                make install
+        - run: echo "source ~/repo/venv/bin/activate" >> $BASH_ENV # här gör vi så att så att CircleCi automatisk laddar venv och då kollar Snyk vad vi har installerat i den.
+        - snyk/scan
 workflows:
   main:
     jobs:
+      - snyk:
+          name: snyk
+          filters:
+            branches:
+              only:
+                - master
+
       - test:
           name: test
-      
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              only:
+                - master
+                - development
+
       - build_docker:
           name: build
           requires: [test]
           filters:
+              tags:
+                only: /^v.*/
               branches:
-                only:
-                  - master
+                ignore: /.*/
 
-      - deploy_ansible:
-          name: deploy
-          requires: [build]
-          filters:
-              branches:
-                only:
-                  - master
+#      - deploy_ansible:
+#          name: deploy
+#          requires: [build]
+#          filters:
+#              tags:
+#                only: /^v.*/
+#              branches:
+#                ignore: /.*/

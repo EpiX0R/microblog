@@ -151,7 +151,8 @@ exec-tests: test-unit test-integration
 # target: test                         - Run tests and display code coverage
 .PHONY: test
 test: validate exec-tests
-	${py} -m coverage report  --rcfile=.coveragerc
+	${MAKE} test-bandit
+	${py} -m coverage report --rcfile=.coveragerc
 	$(MAKE) clean-cov
 
 
@@ -160,6 +161,13 @@ test: validate exec-tests
 .PHONY: test-html
 test-html: exec-tests
 	${py} -m coverage html  --rcfile=.coveragerc && ${browser} tests/coverage_html/index.html &
+
+
+
+## target: test-bandit					- Run bandit and display test results
+.PHONY: test-bandit
+test-bandit:
+	bandit -r app
 
 
 

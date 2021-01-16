@@ -34,6 +34,7 @@ jobs:
             docker build -t $DOCKERHUB_USERNAME/microblog -f docker/Dockerfile_prod .
       - snyk/scan:
           docker-image-name: $IMAGE_NAME
+          additional-arguments: "--policy-path=.snyk"
       - run:
           name: Publish Docker Image to Docker Hub
           command: |

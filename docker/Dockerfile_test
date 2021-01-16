@@ -22,4 +22,4 @@ RUN make install-test
 RUN apk del .build-deps gcc musl-dev
 
 EXPOSE 5000
-ENTRYPOINT ["make", "ci-test"]
+ENTRYPOINT ["make", "test"]

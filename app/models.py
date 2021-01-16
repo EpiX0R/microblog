@@ -90,7 +90,7 @@ class User(UserMixin, db.Model):
         """
         Return Gravatar URL based on email
         """
-        digest = md5(self.email.lower().encode('utf-8')).hexdigest()
+        digest = md5(self.email.lower().encode('utf-8')).hexdigest() # nosec
         url = 'https://www.gravatar.com/avatar/{}?d=retro&s={}'.format(
             digest, size)
         current_app.logger.debug("Get gravatar {}".format(url))

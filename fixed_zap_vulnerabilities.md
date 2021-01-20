@@ -1,6 +1,7 @@
 ## Cookie No HttpOnly Flag [10010]
 
 * Lade till `SESSION_COOKIE_HTTPONLY = True` i app/config.py under Config().
+* Lade till `proxy_cookie_path / "/; HTTPOnly; Secure";` i nginx/loadBalancer.cong
 
 
 ## X-Frame-Options Header Not Set [10020]
@@ -21,3 +22,4 @@
 ## Cookie Without SameSite Attribute [10054]
 
 * Lade till `SESSION_COOKIE_SAMESITE = 'Lax'` i app/config.py under ProdConfig().
+* Lade till `proxy_cookie_path / "/; HTTPOnly; Secure";` i nginx/loadBalancer.cong

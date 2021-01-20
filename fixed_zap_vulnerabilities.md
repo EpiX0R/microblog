@@ -1,6 +1,6 @@
 ## Cookie No HttpOnly Flag [10010]
 
-* Lade till `SESSION_COOKIE_HTTPONLY = True` i app/config.py under ProdConfig().
+* Lade till `SESSION_COOKIE_HTTPONLY = True` i app/config.py under Config().
 
 
 ## X-Frame-Options Header Not Set [10020]

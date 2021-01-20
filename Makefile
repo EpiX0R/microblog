@@ -174,8 +174,7 @@ bandit:
 ## target: zap							- Run zap and display test results
 .PHONY: zap
 zap:
-	@docker run owasp/zap2docker-weekly zap-baseline.py -t http://http://137.135.220.99:5000
-	# @docker run owasp/zap2docker-weekly zap-baseline.py -t https://www.epixor.me
+	@docker run owasp/zap2docker-weekly zap-baseline.py -t http://www.epixor.me
 
 
 
